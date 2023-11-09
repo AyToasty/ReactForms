@@ -12,11 +12,15 @@ export default function Authenticate({token}) {
         method: "GET",
         headers:{
           "Content-Type":"application/json",
-          "Authorization": `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         }
       })
       const json = await response.json()
-      console.log(json)
+      
+      if (json.message && json.message === "jwt malformed") {
+        setError("Invalid token. Please Sign Up again.");
+        return;
+      }
       
       if (json.data && json.data.username) {
         setUsername(json.data.username);
@@ -25,7 +29,7 @@ export default function Authenticate({token}) {
       setSuccessMessage(json.message);
     } catch (error) {
       console.error(error)
-      setError(error.message)
+      setError("An error occurred while authenticating.")
     }
   }
   return (
